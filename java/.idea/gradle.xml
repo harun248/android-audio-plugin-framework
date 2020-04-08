@@ -11,6 +11,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/aaphostsample2" />
             <option value="$PROJECT_DIR$/androidaudioplugin" />
             <option value="$PROJECT_DIR$/androidaudioplugin-lv2" />
             <option value="$PROJECT_DIR$/samples/aapbarebonepluginsample" />
@@ -21,6 +22,7 @@
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
+        <option name="useQualifiedModuleNames" value="true" />
       </GradleProjectSettings>
     </option>
   </component>
