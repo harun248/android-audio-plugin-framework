@@ -4,11 +4,16 @@ import android.content.Context
 import androidx.compose.Model
 import org.androidaudioplugin.AudioPluginHostHelper
 import org.androidaudioplugin.AudioPluginServiceInformation
+import org.androidaudioplugin.PluginInformation
 
 @Model
 object AAPHostSampleState {
 
     var currentMainTab = 0
+
+    var pluginGraph = PluginGraph()
+
+    var availableAudioDataSources = AudioDataSourceSet()
 
     var availablePluginServices = mutableListOf<AudioPluginServiceInformation>()
 
@@ -18,50 +23,132 @@ object AAPHostSampleState {
     }
 }
 
-/*
+typealias PluginConnection = Pair<PluginPort, PluginPort>
 
-aaphostsample2
+class PluginGraph {
+    var systemAudioIn = SystemAudioInNode()
+    var systemAudioOut = SystemAudioOutNode()
+    var systemMidiIn = SystemMidiInNode()
+    var systemMidiOut = SystemMidiOutNode()
+    var nodes = listOf<PluginGraphNode>()
+    var connections = listOf<PluginConnection>()
+}
 
-Model
-	AvailablePlugins
-	PluginGraph
+abstract class PluginGraphNode {
+    abstract val displayName : String
+    abstract var inPorts : List<PluginPort>
+    abstract var outPorts : List<PluginPort>
 
-PluginGraph
-	Connections : listOf<PluginConnection>()
-	Inputs : PluginGraphNode
-	Outputs : PluginGraphNode
+    val audioSources
+        get() = inPorts.filter { p -> p.isAudio }
+    val audioDestinations
+        get() = outPorts.filter { p -> p.isAudio }
+    val midiSources
+        get() = inPorts.filter { p -> p.isMidi }
+    val midiDestinations
+        get() = outPorts.filter { p -> p.isMidi }
+}
 
-PluginConnection
-	Input
-	Output
-	ChannelConnections : mapOf<PluginChannel, PluginChannel>()
+class AAPPluginGraphNode(var plugin: PluginInformation) : PluginGraphNode() {
 
-PluginGraphNode
-	AudioSources : listOf<AudioSource>()
-	MidiSources : listOf<MidiSource>()
-	AudioDestinations : listOf<AudioDestination>()
-	MidiDestinations : listOf<MidiDestination>()
+    override val displayName = plugin.displayName
+    override var inPorts = listOf<PluginPort>()
+    override var outPorts = listOf<PluginPort>()
+}
 
-AudioSource
-	>: AudioBuffer
-	>: PluginInput
-	>: AudioDeviceInput
-MidiSource
-	>: MidiBuffer
-	>: MidiDeviceInput
-AudioDestination
-	>: PluginOutput
+class SystemAudioInNode : PluginGraphNode() {
+    override val displayName = "System Audio In"
+    override var inPorts = listOf<PluginPort>() // empty
+    override var outPorts = listOf<PluginPort>()
+}
 
-plugin list
+class SystemAudioOutNode : PluginGraphNode() {
+    override val displayName = "System Audio Out"
+    override var inPorts = listOf<PluginPort>()
+    override var outPorts = listOf<PluginPort>() // empty
+}
 
-connection list
+class SystemMidiInNode : PluginGraphNode() {
+    override val displayName = "System MIDI In"
+    override var inPorts = listOf<PluginPort>() // empty
+    override var outPorts = listOf<PluginPort>()
+}
 
-sample inputs list
+class SystemMidiOutNode : PluginGraphNode() {
+    override val displayName = "System MIDI Out"
+    override var inPorts = listOf<PluginPort>()
+    override var outPorts = listOf<PluginPort>() // empty
+}
 
-- audio in -> audio out
-  - sample files
-  - audio device inputs
-- midi files
+class PluginPort {
+    var plugin : PluginGraphNode? = null
+    var port : Int = 0
+    val isAudio : Boolean
+        get() = throw NotImplementedError()
+    val isMidi : Boolean
+        get() = throw NotImplementedError()
+}
 
 
- */
+class AudioDataSourceSet {
+    var audioSources = listOf<AudioSource>()
+    var midiSources = listOf<MidiSource>()
+    var audioDestinations = listOf<AudioDestination>()
+    var midiDestinations = listOf<MidiDestination>()
+}
+
+open class AudioSource {
+}
+
+class AudioBufferSource {
+    constructor(buffer: ByteArray) {
+    }
+}
+
+class AudioInput : AudioSource() {
+
+}
+
+class AudioDeviceInput : AudioSource() {
+
+}
+
+open class AudioDestination {
+
+}
+
+class AudioBufferDestination {
+    constructor(buffer: ByteArray) {
+    }
+}
+
+class AudioDeviceOutput : AudioDestination() {
+
+}
+
+
+open class MidiSource {
+
+}
+
+class MidiBufferInput {
+    constructor(buffer: ByteArray) {
+    }
+}
+
+class MidiDeviceInput : MidiSource() {
+
+}
+
+open class MidiDestination {
+
+}
+
+class MidiBufferOutput {
+    constructor(buffer: ByteArray) {
+    }
+}
+
+class MidiDeviceOutput : MidiDestination() {
+
+}

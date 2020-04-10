@@ -5,12 +5,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.Composable
 import androidx.compose.emptyContent
 import androidx.compose.remember
+import androidx.compose.state
 import androidx.ui.core.Modifier
 import androidx.ui.core.setContent
 import androidx.ui.foundation.*
-import androidx.ui.layout.Column
-import androidx.ui.layout.Row
-import androidx.ui.layout.padding
+import androidx.ui.foundation.shape.corner.RoundedCornerShape
+import androidx.ui.graphics.Color
+import androidx.ui.layout.*
 import androidx.ui.material.*
 import androidx.ui.material.icons.Icons
 import androidx.ui.material.icons.filled.ArrowBack
@@ -38,11 +39,28 @@ fun AAPHostSample2App() {
 
 @Composable
 fun AAPHostSample2AppContent() {
-    Surface { HomeScreen() }
+
+    var (state, onStateChange) = state { DrawerState.Closed }
+    Surface {
+        ModalDrawerLayout(
+            drawerState = state,
+            onStateChange = onStateChange,
+            drawerContent = {
+                VerticalScroller {
+                    Column {
+                        AvailablePlugins()
+                    }
+                }
+            },
+            bodyContent = {
+                HomeScreen(onStateChange)
+            })
+    }
 }
 
+
 @Composable
-fun HomeScreen(scaffoldState: ScaffoldState = remember { ScaffoldState() }) {
+fun HomeScreen(onStateChange: (DrawerState) -> Unit, scaffoldState: ScaffoldState = remember { ScaffoldState() }) {
     Scaffold(
         scaffoldState = scaffoldState,
         topAppBar = {
@@ -63,19 +81,20 @@ fun HomeScreen(scaffoldState: ScaffoldState = remember { ScaffoldState() }) {
         bodyContent = {
             Column {
                 TabRow(
-                    listOf("Connections", "Inputs", "Settings"),
+                    listOf("Rack", "Plugins", "Inputs", "Settings"),
                     AAPHostSampleState.currentMainTab
                 ) { index, title ->
                     Tab(
                         text = { Text(title) },
                         selected = AAPHostSampleState.currentMainTab == index,
-                        onSelected = { emptyContent() }
+                        onSelected = { AAPHostSampleState.currentMainTab = index }
                     )
                 }
                 VerticalScroller {
                     Column {
                         when (AAPHostSampleState.currentMainTab) {
-                            0 -> ListAvailablePlugins()
+                            0 -> Rack(onStateChange)
+                            1 -> AvailablePlugins()
                         }
                     }
                 }
@@ -85,7 +104,29 @@ fun HomeScreen(scaffoldState: ScaffoldState = remember { ScaffoldState() }) {
 }
 
 @Composable
-fun ListAvailablePlugins() {
+fun Rack(onStateChange: (DrawerState) -> Unit) {
+    Button(onClick = { onStateChange(DrawerState.Opened) }) {
+        Text("Add")
+    }
+    RackConnections()
+}
+
+@Composable
+fun RackConnections() {
+    val small = TextStyle(fontSize = 12.sp)
+    AAPHostSampleState.pluginGraph.nodes.forEach { n ->
+        Row(
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(n.displayName)
+            }
+        }
+    }
+}
+
+@Composable
+fun AvailablePlugins() {
     val small = TextStyle(fontSize = 12.sp)
     AAPHostSampleState.availablePluginServices.forEach { s ->
         s.plugins.forEach { p ->
