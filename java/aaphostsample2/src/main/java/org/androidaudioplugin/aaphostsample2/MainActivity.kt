@@ -19,6 +19,7 @@ import androidx.ui.text.TextStyle
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.dp
 import androidx.ui.unit.sp
+import org.androidaudioplugin.PluginInformation
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,7 +49,10 @@ fun AAPHostSample2AppContent() {
             drawerContent = {
                 VerticalScroller {
                     Column {
-                        AvailablePlugins()
+                        AvailablePlugins(onItemClick = { plugin ->
+                            AAPHostSampleState.pluginGraph.nodes.add(AAPPluginGraphNode(plugin))
+                            onStateChange(DrawerState.Closed)
+                        })
                     }
                 }
             },
@@ -70,11 +74,6 @@ fun HomeScreen(onStateChange: (DrawerState) -> Unit, scaffoldState: ScaffoldStat
                         text = "AAPHostSample2",
                         style = MaterialTheme.typography.subtitle2.copy(color = contentColor())
                     )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { /*FIXME: implement*/ }) {
-                        Icon(Icons.Filled.ArrowBack)
-                    }
                 }
             )
         },
@@ -104,8 +103,8 @@ fun HomeScreen(onStateChange: (DrawerState) -> Unit, scaffoldState: ScaffoldStat
 }
 
 @Composable
-fun Rack(onStateChange: (DrawerState) -> Unit) {
-    Button(onClick = { onStateChange(DrawerState.Opened) }) {
+fun Rack(onPluginListDrawerStateChange: (DrawerState) -> Unit) {
+    Button(onClick = { onPluginListDrawerStateChange(DrawerState.Opened) }) {
         Text("Add")
     }
     RackConnections()
@@ -118,24 +117,29 @@ fun RackConnections() {
         Row(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp)
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(n.displayName)
+            Clickable(onClick = {}) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(n.displayName)
+                }
             }
         }
     }
 }
 
 @Composable
-fun AvailablePlugins() {
+fun AvailablePlugins(onItemClick: (PluginInformation) -> Unit = {}) {
     val small = TextStyle(fontSize = 12.sp)
+
     AAPHostSampleState.availablePluginServices.forEach { s ->
         s.plugins.forEach { p ->
             Row(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp)
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(p.displayName)
-                    Text(s.packageName, style = small)
+                Clickable(onClick = {onItemClick(p) }) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(p.displayName)
+                        Text(s.packageName, style = small)
+                    }
                 }
             }
         }

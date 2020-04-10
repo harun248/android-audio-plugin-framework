@@ -30,8 +30,17 @@ class PluginGraph {
     var systemAudioOut = SystemAudioOutNode()
     var systemMidiIn = SystemMidiInNode()
     var systemMidiOut = SystemMidiOutNode()
-    var nodes = listOf<PluginGraphNode>()
-    var connections = listOf<PluginConnection>()
+    var nodes = mutableListOf<PluginGraphNode>()
+    var connections = mutableListOf<PluginConnection>()
+
+    constructor() {
+        nodes.add(systemAudioIn)
+        nodes.add(systemMidiIn)
+        nodes.add(systemAudioOut)
+        nodes.add(systemMidiOut)
+        connections.add(PluginConnection(PluginPort(systemAudioIn, 0), PluginPort(systemAudioOut, 0)))
+        connections.add(PluginConnection(PluginPort(systemAudioIn, 1), PluginPort(systemAudioOut, 1)))
+    }
 }
 
 abstract class PluginGraphNode {
@@ -80,9 +89,7 @@ class SystemMidiOutNode : PluginGraphNode() {
     override var outPorts = listOf<PluginPort>() // empty
 }
 
-class PluginPort {
-    var plugin : PluginGraphNode? = null
-    var port : Int = 0
+class PluginPort(var plugin: PluginGraphNode, var port: Int) {
     val isAudio : Boolean
         get() = throw NotImplementedError()
     val isMidi : Boolean
