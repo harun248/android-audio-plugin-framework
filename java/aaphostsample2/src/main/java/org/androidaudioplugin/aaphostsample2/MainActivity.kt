@@ -1,5 +1,6 @@
 package org.androidaudioplugin.aaphostsample2
 
+import android.media.midi.MidiDeviceInfo
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.Composable
@@ -17,6 +18,7 @@ import androidx.ui.unit.dp
 import androidx.ui.unit.sp
 import androidx.ui.unit.toRect
 import org.androidaudioplugin.PluginInformation
+import org.androidaudioplugin.PortInformation
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -215,32 +217,57 @@ fun AvailablePlugins(onItemClick: (PluginInformation) -> Unit = {}) {
 @Composable
 fun PluginDetails() {
     val plugin = AAPHostSampleState.selectedPluginDetails!!
-    VerticalScroller {
+    VerticalScroller(modifier = Modifier.padding(12.dp)) {
         Column {
-            Row { Text(plugin.displayName) }
-            Row {
-                Text("package: ")
-                Text(plugin.packageName)
+            Text(plugin.displayName)
+            Table(2,
+                columnWidth = { index -> if (index == 0) TableColumnWidth.Fixed(150.dp) else TableColumnWidth.Wrap }
+            ) {
+                tableRow {
+                    Text("package: ")
+                    Text(plugin.packageName)
+                }
+                tableRow {
+                    Text("classname: ")
+                    Text(plugin.localName)
+                }
+                if (plugin.author != null) {
+                    tableRow {
+                        Text("author: ")
+                        Text(plugin.author!!)
+                    }
+                }
+                if (plugin.backend != null) {
+                    tableRow {
+                        Text("backend: ")
+                        Text(plugin.backend!!)
+                    }
+                }
+                if (plugin.manufacturer != null) {
+                    tableRow {
+                        Text("manfufacturer: ")
+                        Text(plugin.manufacturer!!)
+                    }
+                }
             }
-            Row {
-                Text("classname: ")
-                Text(plugin.localName)
+            val modifier = Modifier.padding(6.dp)
+            Text("Ports")
+            Table(3,
+                columnWidth = { index -> if (index == 0) TableColumnWidth.MaxIntrinsic else TableColumnWidth.Wrap }
+            ) {
+                for (port in plugin.ports) {
+                    tableRow {
+                        Text(text = port.name, modifier = modifier)
+                        Text(text = when (port.content) {
+                            PortInformation.PORT_CONTENT_TYPE_AUDIO-> "Audio"
+                            PortInformation.PORT_CONTENT_TYPE_MIDI-> "MIDI"
+                            else -> "GP" }, modifier = modifier)
+                        Text(text = when (port.direction) {
+                            PortInformation.PORT_DIRECTION_INPUT -> "I"
+                            else -> "O"}, modifier = modifier)
+                    }
+                }
             }
-            if (plugin.author != null)
-                Row {
-                    Text("author: ")
-                    Text(plugin.author!!)
-                }
-            if (plugin.backend != null)
-                Row {
-                    Text("backend: ")
-                    Text(plugin.backend!!)
-                }
-            if (plugin.manufacturer != null)
-                Row {
-                    Text("manfufacturer: ")
-                    Text(plugin.manufacturer!!)
-                }
         }
     }
 }
