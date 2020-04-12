@@ -9,6 +9,7 @@ import org.androidaudioplugin.PluginInformation
 
 @Model
 object AAPHostSampleState {
+    var modalState = ModalPanelState.None
 
     var currentMainTab = 0
 
@@ -22,6 +23,8 @@ object AAPHostSampleState {
         availablePluginServices.clear()
         availablePluginServices.addAll(AudioPluginHostHelper.queryAudioPluginServices(context))
     }
+
+    var selectedPluginDetails : PluginInformation? = null
 }
 
 typealias PluginConnection = Pair<PluginPort, PluginPort>

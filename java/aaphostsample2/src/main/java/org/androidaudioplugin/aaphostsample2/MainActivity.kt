@@ -1,22 +1,16 @@
 package org.androidaudioplugin.aaphostsample2
 
 import android.os.Bundle
-import androidx.animation.AnimatedFloat
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.Composable
-import androidx.compose.emptyContent
 import androidx.compose.remember
 import androidx.compose.state
 import androidx.ui.core.*
 import androidx.ui.foundation.*
-import androidx.ui.foundation.shape.corner.RoundedCornerShape
-import androidx.ui.graphics.Color
 import androidx.ui.graphics.Paint
 import androidx.ui.graphics.PaintingStyle
 import androidx.ui.layout.*
 import androidx.ui.material.*
-import androidx.ui.material.icons.Icons
-import androidx.ui.material.icons.filled.ArrowBack
 import androidx.ui.text.TextStyle
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.dp
@@ -43,40 +37,43 @@ fun AAPHostSample2App() {
 
 @Composable
 fun AAPHostSample2AppContent() {
-
-    var (state, onPluginListDrawerStateChange) = state { PluginListPanelState.None }
     Surface {
-        ModalPluginListPanelLayout(
-            visibilityState = state,
-            onStateChange = onPluginListDrawerStateChange,
-            panelContent = {
-                AvailablePlugins(onItemClick = { plugin ->
-                    AAPHostSampleState.pluginGraph.nodes.add(AAPPluginGraphNode(plugin))
-                    onPluginListDrawerStateChange(PluginListPanelState.None)
-                })
-            },
-            bodyContent = { HomeScreen(onPluginListDrawerStateChange) }
+        ModalPanelLayout(
+            bodyContent = { HomeScreen() }
         )
     }
 }
 
-enum class PluginListPanelState {
+enum class ModalPanelState {
     None,
-    Visible
+    AddPluginConnection,
+    ShowPluginDetails
 }
 
 @Composable
-fun ModalPluginListPanelLayout(
-    visibilityState: PluginListPanelState,
-    onStateChange: (PluginListPanelState) -> Unit,
-    panelContent: @Composable() () -> Unit,
+fun ModalPanelLayout(
     bodyContent: @Composable() () -> Unit
 ) {
     Box(Modifier.fillMaxSize()) {
         Stack {
             bodyContent()
-            if (visibilityState == PluginListPanelState.Visible) {
-                Scrim(visibilityState, onStateChange)
+
+            val panelContent = @Composable() {
+                when (AAPHostSampleState.modalState) {
+                    ModalPanelState.AddPluginConnection -> {
+                        AvailablePlugins(onItemClick = { plugin ->
+                            AAPHostSampleState.pluginGraph.nodes.add(AAPPluginGraphNode(plugin))
+                            AAPHostSampleState.modalState = ModalPanelState.None
+                        })
+                    }
+                    ModalPanelState.ShowPluginDetails -> {
+                        PluginDetails()
+                    }
+                }
+            }
+
+            if (AAPHostSampleState.modalState != ModalPanelState.None) {
+                Scrim()
                 Box(
                     padding = PluginListPanelPadding
                 ) {
@@ -95,10 +92,7 @@ private const val ScrimDefaultOpacity = 0.32f
 private val PluginListPanelPadding = 36.dp
 
 @Composable
-private fun Scrim(
-    state: PluginListPanelState,
-    onStateChange: (PluginListPanelState) -> Unit // FIXME: change from DrawerState to something else (PluginListState?)
-) {
+private fun Scrim() {
     val scrimContent = @Composable {
         val paint = remember { Paint().apply { style = PaintingStyle.fill } }
         val color = MaterialTheme.colors.onSurface
@@ -108,8 +102,8 @@ private fun Scrim(
             drawRect(size.toRect(), paint)
         }
     }
-    if (state == PluginListPanelState.Visible) {
-        Clickable(onClick = { onStateChange(PluginListPanelState.None) }, children = scrimContent)
+    if (AAPHostSampleState.modalState != ModalPanelState.None) {
+        Clickable(onClick = { AAPHostSampleState.modalState = ModalPanelState.None }, children = scrimContent)
     } else {
         scrimContent()
     }
@@ -118,7 +112,6 @@ private fun Scrim(
 
 @Composable
 fun HomeScreen(
-    onPluginListDrawerStateChange: (PluginListPanelState) -> Unit,
     scaffoldState: ScaffoldState = remember { ScaffoldState() }
 ) {
     Scaffold(
@@ -148,8 +141,11 @@ fun HomeScreen(
                 VerticalScroller {
                     Column {
                         when (AAPHostSampleState.currentMainTab) {
-                            0 -> Rack(onPluginListDrawerStateChange)
-                            1 -> AvailablePlugins()
+                            0 -> Rack()
+                            1 -> AvailablePlugins(onItemClick = { p ->
+                                AAPHostSampleState.selectedPluginDetails = p
+                                AAPHostSampleState.modalState = ModalPanelState.ShowPluginDetails
+                            })
                         }
                     }
                 }
@@ -159,13 +155,13 @@ fun HomeScreen(
 }
 
 @Composable
-fun Rack(onPluginListDrawerStateChange: (PluginListPanelState) -> Unit) {
+fun Rack() {
     Stack {
         VerticalScroller {
             Column {
                 Row {
                     Button(onClick = {
-                        onPluginListDrawerStateChange(PluginListPanelState.Visible)
+                        AAPHostSampleState.modalState = ModalPanelState.AddPluginConnection
                     }) {
                         Text("Add")
                     }
@@ -212,6 +208,39 @@ fun AvailablePlugins(onItemClick: (PluginInformation) -> Unit = {}) {
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun PluginDetails() {
+    val plugin = AAPHostSampleState.selectedPluginDetails!!
+    VerticalScroller {
+        Column {
+            Row { Text(plugin.displayName) }
+            Row {
+                Text("package: ")
+                Text(plugin.packageName)
+            }
+            Row {
+                Text("classname: ")
+                Text(plugin.localName)
+            }
+            if (plugin.author != null)
+                Row {
+                    Text("author: ")
+                    Text(plugin.author!!)
+                }
+            if (plugin.backend != null)
+                Row {
+                    Text("backend: ")
+                    Text(plugin.backend!!)
+                }
+            if (plugin.manufacturer != null)
+                Row {
+                    Text("manfufacturer: ")
+                    Text(plugin.manufacturer!!)
+                }
         }
     }
 }
