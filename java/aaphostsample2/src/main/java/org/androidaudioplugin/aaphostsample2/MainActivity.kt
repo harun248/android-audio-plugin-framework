@@ -44,24 +44,19 @@ fun AAPHostSample2App() {
 @Composable
 fun AAPHostSample2AppContent() {
 
-    var (state, onStateChange) = state { PluginListPanelState.None }
+    var (state, onPluginListDrawerStateChange) = state { PluginListPanelState.None }
     Surface {
         ModalPluginListPanelLayout(
             visibilityState = state,
-            onStateChange = onStateChange,
+            onStateChange = onPluginListDrawerStateChange,
             panelContent = {
-                VerticalScroller {
-                    Column {
-                        AvailablePlugins(onItemClick = { plugin ->
-                            AAPHostSampleState.pluginGraph.nodes.add(AAPPluginGraphNode(plugin))
-                            onStateChange(PluginListPanelState.None)
-                        })
-                    }
-                }
+                AvailablePlugins(onItemClick = { plugin ->
+                    AAPHostSampleState.pluginGraph.nodes.add(AAPPluginGraphNode(plugin))
+                    onPluginListDrawerStateChange(PluginListPanelState.None)
+                })
             },
-            bodyContent = {
-                HomeScreen(onStateChange)
-            })
+            bodyContent = { HomeScreen(onPluginListDrawerStateChange) }
+        )
     }
 }
 
@@ -122,7 +117,10 @@ private fun Scrim(
 // end
 
 @Composable
-fun HomeScreen(onStateChange: (PluginListPanelState) -> Unit, scaffoldState: ScaffoldState = remember { ScaffoldState() }) {
+fun HomeScreen(
+    onPluginListDrawerStateChange: (PluginListPanelState) -> Unit,
+    scaffoldState: ScaffoldState = remember { ScaffoldState() }
+) {
     Scaffold(
         scaffoldState = scaffoldState,
         topAppBar = {
@@ -150,7 +148,7 @@ fun HomeScreen(onStateChange: (PluginListPanelState) -> Unit, scaffoldState: Sca
                 VerticalScroller {
                     Column {
                         when (AAPHostSampleState.currentMainTab) {
-                            0 -> Rack(onStateChange)
+                            0 -> Rack(onPluginListDrawerStateChange)
                             1 -> AvailablePlugins()
                         }
                     }
@@ -162,10 +160,20 @@ fun HomeScreen(onStateChange: (PluginListPanelState) -> Unit, scaffoldState: Sca
 
 @Composable
 fun Rack(onPluginListDrawerStateChange: (PluginListPanelState) -> Unit) {
-    Button(onClick = { onPluginListDrawerStateChange(PluginListPanelState.Visible) }) {
-        Text("Add")
+    Stack {
+        VerticalScroller {
+            Column {
+                Row {
+                    Button(onClick = {
+                        onPluginListDrawerStateChange(PluginListPanelState.Visible)
+                    }) {
+                        Text("Add")
+                    }
+                }
+                RackConnections()
+            }
+        }
     }
-    RackConnections()
 }
 
 @Composable
@@ -186,17 +194,21 @@ fun RackConnections() {
 
 @Composable
 fun AvailablePlugins(onItemClick: (PluginInformation) -> Unit = {}) {
-    val small = TextStyle(fontSize = 12.sp)
+    VerticalScroller {
+        Column {
+            val small = TextStyle(fontSize = 12.sp)
 
-    AAPHostSampleState.availablePluginServices.forEach { s ->
-        s.plugins.forEach { p ->
-            Row(
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp)
-            ) {
-                Clickable(onClick = {onItemClick(p) }) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(p.displayName)
-                        Text(s.packageName, style = small)
+            AAPHostSampleState.availablePluginServices.forEach { s ->
+                s.plugins.forEach { p ->
+                    Row(
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+                    ) {
+                        Clickable(onClick = { onItemClick(p) }) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(p.displayName)
+                                Text(s.packageName, style = small)
+                            }
+                        }
                     }
                 }
             }

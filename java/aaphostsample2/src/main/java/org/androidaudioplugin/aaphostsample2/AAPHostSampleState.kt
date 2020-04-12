@@ -2,6 +2,7 @@ package org.androidaudioplugin.aaphostsample2
 
 import android.content.Context
 import androidx.compose.Model
+import androidx.compose.frames.ModelList
 import org.androidaudioplugin.AudioPluginHostHelper
 import org.androidaudioplugin.AudioPluginServiceInformation
 import org.androidaudioplugin.PluginInformation
@@ -15,7 +16,7 @@ object AAPHostSampleState {
 
     var availableAudioDataSources = AudioDataSourceSet()
 
-    var availablePluginServices = mutableListOf<AudioPluginServiceInformation>()
+    var availablePluginServices = ModelList<AudioPluginServiceInformation>()
 
     fun updateAudioPluginServices(context: Context) {
         availablePluginServices.clear()
@@ -30,8 +31,8 @@ class PluginGraph {
     var systemAudioOut = SystemAudioOutNode()
     var systemMidiIn = SystemMidiInNode()
     var systemMidiOut = SystemMidiOutNode()
-    var nodes = mutableListOf<PluginGraphNode>()
-    var connections = mutableListOf<PluginConnection>()
+    var nodes = ModelList<PluginGraphNode>()
+    var connections = ModelList<PluginConnection>()
 
     constructor() {
         nodes.add(systemAudioIn)
