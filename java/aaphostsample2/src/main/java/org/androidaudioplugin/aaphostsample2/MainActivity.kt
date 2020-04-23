@@ -12,6 +12,8 @@ import androidx.ui.graphics.Paint
 import androidx.ui.graphics.PaintingStyle
 import androidx.ui.layout.*
 import androidx.ui.material.*
+import androidx.ui.res.Resource
+import androidx.ui.res.loadImageResource
 import androidx.ui.text.TextStyle
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.dp
@@ -131,7 +133,7 @@ fun HomeScreen(
         bodyContent = {
             Column {
                 TabRow(
-                    listOf("Rack", "Plugins", "Inputs", "Settings"),
+                    listOf("Rack", "Plugins", "Src/Dst"),
                     AAPHostSampleState.currentMainTab
                 ) { index, title ->
                     Tab(
@@ -219,7 +221,14 @@ fun PluginDetails() {
     val plugin = AAPHostSampleState.selectedPluginDetails!!
     VerticalScroller(modifier = Modifier.padding(12.dp)) {
         Column {
-            Text(plugin.displayName)
+            Row {
+                if (plugin.iconResource != 0) {
+                    val image = loadImageResource(id = plugin.iconResource)
+                    if (image.resource.resource != null)
+                        Image(image.resource.resource!!, modifier = Modifier.preferredHeightIn(maxHeight = 120.dp))
+                }
+                Text(plugin.displayName)
+            }
             Table(2,
                 columnWidth = { index -> if (index == 0) TableColumnWidth.Fixed(150.dp) else TableColumnWidth.Wrap }
             ) {
@@ -261,10 +270,10 @@ fun PluginDetails() {
                         Text(text = when (port.content) {
                             PortInformation.PORT_CONTENT_TYPE_AUDIO-> "Audio"
                             PortInformation.PORT_CONTENT_TYPE_MIDI-> "MIDI"
-                            else -> "GP" }, modifier = modifier)
+                            else -> "-" }, modifier = modifier)
                         Text(text = when (port.direction) {
-                            PortInformation.PORT_DIRECTION_INPUT -> "I"
-                            else -> "O"}, modifier = modifier)
+                            PortInformation.PORT_DIRECTION_INPUT -> "In"
+                            else -> "Out"}, modifier = modifier)
                     }
                 }
             }
