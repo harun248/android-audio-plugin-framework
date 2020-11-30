@@ -1,12 +1,14 @@
-package org.androidaudioplugin.samples.aapcomposehostsample
+package org.androidaudioplugin.samples.aaphostdogfooding
 
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.contentColor
 import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.State
 import androidx.compose.foundation.lazy.LazyColumnFor
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.ui.tooling.preview.Preview
 import org.androidaudioplugin.PluginInformation
 import org.androidaudioplugin.PortInformation
+import androidx.compose.runtime.livedata.observeAsState
 
 @Composable
 @ExperimentalMaterialApi
@@ -47,12 +50,14 @@ fun ModalPanelLayout(
     Box(Modifier.fillMaxSize()) {
         bodyContent()
 
+        val currentState = aapHostSampleViewModel.modalState.observeAsState(ModalPanelState.None)
+        val pluginGraph = aapHostSampleViewModel.pluginGraph.observeAsState()
         val panelContent = @Composable() {
-            when (aapHostSampleState.value.modalState) {
+            when (currentState.value) {
                 ModalPanelState.AddPluginConnection -> {
                     AvailablePlugins(onItemClick = { plugin ->
-                        aapHostSampleState.value.pluginGraph.nodes.add(AAPPluginGraphNode(plugin))
-                        aapHostSampleState.value.modalState = ModalPanelState.None
+                        pluginGraph.value!!.nodes.add(AAPPluginGraphNode(plugin))
+                        aapHostSampleViewModel.onModalStateChanged(ModalPanelState.None)
                     })
                 }
                 ModalPanelState.ShowPluginDetails -> {
@@ -61,7 +66,7 @@ fun ModalPanelLayout(
             }
         }
 
-        if (aapHostSampleState.value.modalState != ModalPanelState.None) {
+        if (currentState.value != ModalPanelState.None) {
             //Scrim()
             Box(Modifier.padding(PluginListPanelPadding)) {
                 // remove Container when we will support multiply children
@@ -115,23 +120,22 @@ fun HomeScreen(
         },
         bodyContent = {
             Column {
+                val (selectedTab, setSelectedTab) = remember { mutableStateOf(0) }
                 TabRow(
-                    aapHostSampleState.value.currentMainTab
+                    selectedTab
                 ) {
-                    val index = aapHostSampleState.value.currentMainTab
-                    Tab(aapHostSampleState.value.currentMainTab == index,
-                        {},
-                        Modifier.offset(0.dp), // Why is this parameter mandatory!?
-                        { Text(arrayOf("Rack", "Plugins", "Src/Dst") [index]) },
-                        { aapHostSampleState.value.currentMainTab = index }
-                    )
+                    arrayOf("Rack", "Plugins", "Src/Dst").forEachIndexed {tabIndex, label ->
+                        Tab(selectedTab == tabIndex,
+                            { setSelectedTab(tabIndex) },
+                            text = { Text(label) }
+                        )
+                    }
                 }
-                when (aapHostSampleState.value.currentMainTab) {
+                when (selectedTab) {
                     0 -> Rack()
                     1 -> AvailablePlugins(onItemClick = { p ->
-                        aapHostSampleState.value.selectedPluginDetails = p
-                        aapHostSampleState.value.modalState =
-                            ModalPanelState.ShowPluginDetails
+                        aapHostSampleViewModel.onSelectedPluginDetailsChanged(p)
+                        aapHostSampleViewModel.onModalStateChanged(ModalPanelState.ShowPluginDetails)
                     })
                 }
             }
@@ -146,7 +150,7 @@ fun Rack() {
             Column {
                 Row {
                     Button(onClick = {
-                        aapHostSampleState.value.modalState = ModalPanelState.AddPluginConnection
+                        aapHostSampleViewModel.onModalStateChanged(ModalPanelState.AddPluginConnection)
                     }) {
                         Text("Add")
                     }
@@ -160,7 +164,7 @@ fun Rack() {
 @Composable
 fun RackConnections() {
     val small = TextStyle(fontSize = 12.sp)
-    aapHostSampleState.value.pluginGraph.nodes.forEach { n ->
+    aapHostSampleViewModel.pluginGraph.value!!.nodes.forEach { n ->
         Row(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp)
         ) {
@@ -175,7 +179,8 @@ fun RackConnections() {
 fun AvailablePlugins(onItemClick: (PluginInformation) -> Unit = {}) {
     val small = TextStyle(fontSize = 12.sp)
 
-    LazyColumnFor(aapHostSampleState.value.availablePluginServices.flatMap { s -> s.plugins }) { p ->
+    val pluginsState = aapHostSampleViewModel.availablePluginServices.observeAsState()
+    LazyColumnFor(pluginsState.value!!.flatMap { s -> s.plugins }) { p ->
         Row(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp)
                 .then(Modifier.clickable { onItemClick(p) })
@@ -190,7 +195,7 @@ fun AvailablePlugins(onItemClick: (PluginInformation) -> Unit = {}) {
 
 @Composable
 fun PluginDetails() {
-    val plugin = aapHostSampleState.value.selectedPluginDetails!!
+    val plugin = aapHostSampleViewModel.selectedPluginDetails!!
     ScrollableColumn(modifier = Modifier.padding(12.dp)) {
         Column {
             Row {
@@ -202,34 +207,34 @@ fun PluginDetails() {
                         image(image.resource.resource!!, modifier = Modifier.preferredHeightIn(max = 120.dp))
                 }
                 */
-                Text(plugin.displayName)
+                Text(plugin.value!!.displayName)
             }
             Row {
                 Column {
                     Row {
                         Text("package: ")
-                        Text(plugin.packageName)
+                        Text(plugin.value!!.packageName)
                     }
                     Row {
                         Text("classname: ")
-                        Text(plugin.localName)
+                        Text(plugin.value!!.localName)
                     }
-                    if (plugin.author != null) {
+                    if (plugin.value!!.author != null) {
                         Row {
                             Text("author: ")
-                            Text(plugin.author ?: "")
+                            Text(plugin.value!!.author ?: "")
                         }
                     }
-                    if (plugin.backend != null) {
+                    if (plugin.value!!.backend != null) {
                         Row {
                             Text("backend: ")
-                            Text(plugin.backend ?: "")
+                            Text(plugin.value!!.backend ?: "")
                         }
                     }
-                    if (plugin.manufacturer != null) {
+                    if (plugin.value!!.manufacturer != null) {
                         Row {
                             Text("manfufacturer: ")
-                            Text(plugin.manufacturer ?: "")
+                            Text(plugin.value!!.manufacturer ?: "")
                         }
                     }
                 }
@@ -237,7 +242,7 @@ fun PluginDetails() {
             val modifier = Modifier.padding(6.dp)
             Text("Ports")
             Column {
-                for (port in plugin.ports) {
+                for (port in plugin.value!!.ports) {
                     Row {
                         Text(text = port.name, modifier = modifier)
                         Text(text = when (port.content) {

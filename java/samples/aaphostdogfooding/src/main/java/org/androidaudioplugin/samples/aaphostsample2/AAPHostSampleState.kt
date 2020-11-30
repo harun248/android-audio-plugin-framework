@@ -1,34 +1,39 @@
-package org.androidaudioplugin.samples.aapcomposehostsample
+package org.androidaudioplugin.samples.aaphostdogfooding
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 
 import android.content.Context
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import org.androidaudioplugin.AudioPluginHostHelper
 import org.androidaudioplugin.AudioPluginServiceInformation
 import org.androidaudioplugin.PluginInformation
 
-fun updateAudioPluginServices(context: Context, state: AAPHostSampleState) {
-    state.availablePluginServices.clear()
-    state.availablePluginServices.addAll(AudioPluginHostHelper.queryAudioPluginServices(context))
+class AAPHostSampleViewModel() : ViewModel() {
+    private var _modalState = MutableLiveData(ModalPanelState.None)
+    val modalState : LiveData<ModalPanelState> = _modalState
+    fun onModalStateChanged(newState: ModalPanelState) { _modalState.value = newState }
+
+    private var _pluginGraph = MutableLiveData(PluginGraph())
+    val pluginGraph : LiveData<PluginGraph> = _pluginGraph
+
+    private var _availableAudioDataSources = MutableLiveData(AudioDataSourceSet())
+    val availableAudioDataSources : LiveData<AudioDataSourceSet> = _availableAudioDataSources
+
+    private var _availablePluginServices = MutableLiveData(mutableListOf<AudioPluginServiceInformation>())
+    val availablePluginServices : LiveData<MutableList<AudioPluginServiceInformation>> = _availablePluginServices
+
+    private var _selectedPluginDetails = MutableLiveData<PluginInformation?>(null)
+    val selectedPluginDetails : LiveData<PluginInformation?> = _selectedPluginDetails
+    fun onSelectedPluginDetailsChanged(newState: PluginInformation?) { _selectedPluginDetails.value = newState }
 }
 
-class AAPHostSampleState {
-    var modalState = ModalPanelState.None
-
-    var currentMainTab = 0
-
-    var pluginGraph = PluginGraph()
-
-    var availableAudioDataSources = AudioDataSourceSet()
-
-    var availablePluginServices = mutableStateListOf<AudioPluginServiceInformation>()
-
-    var selectedPluginDetails : PluginInformation? = null
-}
-
-var aapHostSampleState = mutableStateOf(AAPHostSampleState())
+val aapHostSampleViewModel = AAPHostSampleViewModel()
 
 typealias PluginConnection = Pair<PluginPort, PluginPort>
 
@@ -37,8 +42,8 @@ class PluginGraph {
     var systemAudioOut = SystemAudioOutNode()
     var systemMidiIn = SystemMidiInNode()
     var systemMidiOut = SystemMidiOutNode()
-    var nodes = mutableStateListOf<PluginGraphNode>()
-    var connections = mutableStateListOf<PluginConnection>()
+    var nodes = mutableListOf<PluginGraphNode>()
+    var connections = mutableListOf<PluginConnection>()
 
     constructor() {
         nodes.add(systemAudioIn)

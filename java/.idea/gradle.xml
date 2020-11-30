@@ -14,8 +14,8 @@
             <option value="/media/atsushi/extssd0/sources/android-audio-plugin-framework/java/androidaudioplugin" />
             <option value="/media/atsushi/extssd0/sources/android-audio-plugin-framework/java/androidaudioplugin-ui-androidx" />
             <option value="/media/atsushi/extssd0/sources/android-audio-plugin-framework/java/samples/aapbarebonepluginsample" />
+            <option value="/media/atsushi/extssd0/sources/android-audio-plugin-framework/java/samples/aaphostdogfooding" />
             <option value="/media/atsushi/extssd0/sources/android-audio-plugin-framework/java/samples/aaphostsample" />
-            <option value="/media/atsushi/extssd0/sources/android-audio-plugin-framework/java/samples/aaphostsample2" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
