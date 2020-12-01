@@ -1,5 +1,6 @@
 package org.androidaudioplugin.samples.aaphostdogfooding
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.contentColor
@@ -19,6 +20,11 @@ import androidx.ui.tooling.preview.Preview
 import org.androidaudioplugin.PluginInformation
 import org.androidaudioplugin.PortInformation
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.toRect
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.PaintingStyle
 
 @Composable
 @ExperimentalMaterialApi
@@ -67,7 +73,7 @@ fun ModalPanelLayout(
         }
 
         if (currentState.value != ModalPanelState.None) {
-            //Scrim()
+            Scrim()
             Box(Modifier.padding(PluginListPanelPadding)) {
                 // remove Container when we will support multiply children
                 Surface {
@@ -82,26 +88,20 @@ fun ModalPanelLayout(
 private const val ScrimDefaultOpacity = 0.32f
 private val PluginListPanelPadding = 36.dp
 
-/*
 @Composable
 private fun Scrim() {
     val scrimContent = @Composable {
-        val paint = remember { Paint().apply { style = PaintingStyle.fill } }
+        val paint = remember { Paint().apply { style = PaintingStyle.Fill } }
         val color = MaterialTheme.colors.onSurface
         Canvas(Modifier.fillMaxSize()) {
-            val scrimAlpha = ScrimDefaultOpacity
-            paint.color = color.copy(alpha = scrimAlpha)
-            drawRect(size.toRect(), paint)
+            drawRect(color.copy(alpha = ScrimDefaultOpacity))
         }
     }
-    if (aapHostSampleState.value.modalState != ModalPanelState.None) {
-        Clickable(onClick = { aapHostSampleState.value.modalState = ModalPanelState.None }, children = scrimContent)
-    } else {
+    Surface(Modifier.clickable(onClick = { aapHostSampleViewModel.onModalStateChanged(ModalPanelState.None) })) {
         scrimContent()
     }
 }
-// end
-*/
+//end
 
 @ExperimentalMaterialApi
 @Composable
