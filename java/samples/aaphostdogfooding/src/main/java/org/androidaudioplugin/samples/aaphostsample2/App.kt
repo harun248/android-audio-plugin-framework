@@ -77,7 +77,7 @@ fun ModalPanelLayout(
             Box(Modifier.padding(PluginListPanelPadding)) {
                 // remove Container when we will support multiply children
                 Surface {
-                    Box(Modifier.fillMaxSize(), Alignment.CenterStart) { panelContent }
+                    Box(Modifier.fillMaxSize(), Alignment.CenterStart) { panelContent() }
                 }
             }
         }
