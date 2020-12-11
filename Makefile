@@ -7,7 +7,12 @@ NDK_HOST=`uname | tr '[:upper:]' '[:lower:]'`
 all: \
 	maybe-download-ndk \
 	build-desktop \
-	setup-dummy-prefab-headers-dir\
+	setup-dummy-prefab-headers-dir \
+	build-java
+
+all-no-desktop: \
+	maybe-download-ndk \
+	setup-dummy-prefab-headers-dir \
 	build-java
 
 .PHONY:
@@ -32,7 +37,7 @@ build-desktop:
 	cd docs/native && doxygen && cd ../..
 
 build-java:
-	cd java && ANDROID_SDK_ROOT=$(ANDROID_SDK_ROOT) ./gradlew build dokka
+	cd java && ANDROID_SDK_ROOT=$(ANDROID_SDK_ROOT) ./gradlew build dokka publishToMavenLocal
 
 # FIXME: remove this target once https://issuetracker.google.com/issues/172105145 is supported.
 setup-dummy-prefab-headers-dir:

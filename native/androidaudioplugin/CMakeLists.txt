@@ -1,8 +1,6 @@
-# Sets the minimum version of CMake required to build your native library.
-# This ensures that a certain set of CMake features is available to
-# your build.
-
 cmake_minimum_required(VERSION 3.5.1)
+
+project(androidaudioplugin VERSION 0.6.2 LANGUAGES CXX)
 
 # List of sources. Android build has some additional sources.
 set (androidaudioplugin_SOURCES
@@ -17,8 +15,6 @@ set (androidaudioplugin_INCLUDES
 	"android/src/gen/include"
 	"../../dependencies/tinyxml2"
 	)
-
-#set (androidaudioplugin_LIBS ${androidaudioplugin_LIBS} tinyxml2)
 
 if (ANDROID)
 
@@ -45,13 +41,9 @@ set (androidaudioplugin_SOURCES
 	)
 
 set (androidaudioplugin_LIBS ${androidaudioplugin_LIBS} dl grpc grpc++ protobuf rt)
+
 endif (ANDROID)
 
-# Specifies a library name, specifies whether the library is STATIC or
-# SHARED, and provides relative paths to the source code. You can
-# define multiple libraries by adding multiple add_library() commands,
-# and CMake builds them for you. When you build your app, Gradle
-# automatically packages shared libraries with your APK.
 
 add_library ( # Specifies the name of the library.
             androidaudioplugin
