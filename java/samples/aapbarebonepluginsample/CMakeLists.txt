@@ -42,7 +42,7 @@ target_compile_options(aapbarebonepluginsample
         -Wshadow-field
         )
 
-if (FALSE)
+if (BUILD_WITH_PREFAB)
 if (ANDROID)
     find_package (androidaudioplugin REQUIRED CONFIG)
     set (aapbarebonepluginsample_LIBS
