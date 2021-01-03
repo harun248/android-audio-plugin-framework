@@ -82,7 +82,7 @@ jobs:
         key: ndk_r21c_osx
     - name: install deps
       run: |
-        brew tap grpc/grpc && brew install doxygen ninja graphviz grpc
+        brew tap grpc/grpc && brew install doxygen ninja graphviz openssl grpc
     - name: workaround for https://github.com/actions/virtual-environments/issues/2228
       run: echo cmake.dir=/usr/local > java/local.properties
     - name: build
