@@ -82,10 +82,10 @@ jobs:
         key: ndk_r21c_osx
     - name: install deps
       run: |
-        brew install doxygen ninja graphviz
+        brew tap grpc/grpc && brew install doxygen ninja graphviz grpc
     - name: workaround for https://github.com/actions/virtual-environments/issues/2228
       run: echo cmake.dir=/usr/local > java/local.properties
     - name: build
-      run: make all-no-desktop
+      run: make
       env:
         ANDROID_SDK_ROOT: /Users/runner/Library/Android/sdk
