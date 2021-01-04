@@ -31,10 +31,6 @@ set (androidaudioplugin_LIBS ${androidaudioplugin_LIBS} android log binder_ndk)
 
 else (ANDROID)
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(PROTOBUF REQUIRED protobuf)
-pkg_check_modules(GRPC_PP REQUIRED grpc++)
-
 set (androidaudioplugin_SOURCES
 	${androidaudioplugin_SOURCES}
 	"desktop/src/desktop-audio-plugin-client-bridge.cpp"
@@ -85,4 +81,6 @@ target_link_directories(androidaudioplugin
 		${GRPC_PP_LIBRARY_DIRS}
 		)
 
-target_link_libraries (androidaudioplugin ${androidaudioplugin_LIBS})
+target_link_libraries (androidaudioplugin
+		${androidaudioplugin_LIBS}
+		)

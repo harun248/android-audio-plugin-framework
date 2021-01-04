@@ -4,16 +4,20 @@
 
 cmake_minimum_required(VERSION 3.4.1)
 
-set (ENV{PKG_CONFIG_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/../../dependencies/lv2-desktop/dist/lib/pkgconfig/")
+set (androidaudioplugin_INCLUDES
+	${androidaudioplugin_INCLUDES}
+	${PROTOBUF_INCLUDE_DIRS}
+	${GRPC_PP_INCLUDE_DIRS}
+	)
 
-find_package ( PkgConfig REQUIRED )
+set (aaphostsample_LIBRARY_DIRS
+        ${PROTOBUF_LIBRARY_DIRS}
+        ${GRPC_PP_LIBRARY_DIRS}
+        )
 
-link_directories(
-	"${CMAKE_CURRENT_SOURCE_DIR}/../build/native/androidaudioplugin/"
-)
-
-set (aaphostsample_LIBS ${aaphostsample_LIBS})
-
+set (aaphostsample_LIBS
+        ${PROTOBUF_LIBRARIES}
+        ${GRPC_PP_LIBRARIES})
 
 # Specifies a library name, specifies whether the library is STATIC or
 # SHARED, and provides relative paths to the source code. You can
@@ -39,5 +43,14 @@ target_compile_options(aaphostsample
         -Wshadow
         )
 
-target_link_libraries(aaphostsample ${aaphostsample-LIBS} androidaudioplugin)
+target_link_directories(aaphostsample
+        PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/../build/native/androidaudioplugin/"
+        ${aaphostsample_LIBRARY_DIRS}
+        )
+
+target_link_libraries(aaphostsample
+        ${aaphostsample_LIBS}
+        androidaudioplugin
+        )
 
