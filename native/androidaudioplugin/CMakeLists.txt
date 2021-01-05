@@ -104,6 +104,8 @@ list(GET GenProtoGrpcSources 0 GenProtoGrpcSource0)
 
 message ("GenProtoSource0: " ${GenProtoSource0})
 message ("GenProtoGrpcSource0: " ${GenProtoGrpcSource0})
+message ("PROTOBUF_INCLUDE_DIRS: " ${PROTOBUF_INCLUDE_DIRS})
+message ("GEN_PROTO_GRPC_INCLUDE_DIR: " ${GEN_PROTO_GRPC_INCLUDE_DIR})
 
 set (androidaudioplugin_SOURCES
 	${androidaudioplugin_SOURCES}
