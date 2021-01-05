@@ -37,7 +37,6 @@ find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin) # Get full path to plugin
 
 function(PROTOBUF_GENERATE_GRPC_CPP SRCS HDRS)
   if(NOT ARGN)
-    message(SEND_ERROR "Error: PROTOBUF_GENERATE_GRPC_CPP() called without any proto files")
     return()
   endif()
 
@@ -98,9 +97,6 @@ PROTOBUF_GENERATE_GRPC_CPP(GenProtoGrpcSources GenProtoGrpcIncludes "desktop/src
 get_filename_component(GEN_PROTO_INCLUDE_DIR ${GenProtoIncludes} DIRECTORY)
 get_filename_component(GEN_PROTO_GRPC_INCLUDE_DIR ${GenProtoGrpcIncludes} DIRECTORY)
 
-message ("GenProtoIncludes:" ${GenProtoIncludes})
-message ("GenProtoGrpcIncludes:" ${GenProtoGrpcIncludes})
-
 set (androidaudioplugin_SOURCES
 	${androidaudioplugin_SOURCES}
 	"desktop/src/desktop-audio-plugin-client-bridge.cpp"
@@ -118,9 +114,17 @@ set (androidaudioplugin_INCLUDES
 	${GRPCPP_INCLUDE_DIRS}
 	)
 
-set (androidaudioplugin_LIBRARY_DIRS ${PROTOBUF_LIBRARY_DIRS} ${GRPC_LIBRARY_DIRS} ${GRPCPP_LIBRARY_DIRS})
+set (androidaudioplugin_LIBRARY_DIRS
+	${PROTOBUF_LIBRARY_DIRS}
+	${GRPC_LIBRARY_DIRS}
+	${GRPCPP_LIBRARY_DIRS})
 
-set (androidaudioplugin_LIBS ${androidaudioplugin_LIBS} ${PROTOBUF_LIBRARIES} ${GRPC_LIBRARIES} ${GRPCPP_LIBRARIES} dl rt)
+set (androidaudioplugin_LIBS
+	${androidaudioplugin_LIBS}
+	${PROTOBUF_LIBRARIES}
+	${GRPC_LIBRARIES}
+	${GRPCPP_LIBRARIES}
+	dl rt)
 
 endif (ANDROID)
 
