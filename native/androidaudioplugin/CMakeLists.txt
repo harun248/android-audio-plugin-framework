@@ -110,16 +110,16 @@ message ("GEN_PROTO_GRPC_INCLUDE_DIR: " ${GEN_PROTO_GRPC_INCLUDE_DIR})
 set (androidaudioplugin_SOURCES
 	${androidaudioplugin_SOURCES}
 	"desktop/src/desktop-audio-plugin-client-bridge.cpp"
-#	${GenProtoSource0}
-#	${GenProtoGrpcSource0}
+	${GenProtoSources}
+	${GenProtoGrpcSources}
 	"desktop/src/audio-plugin-host-desktop.cpp"
 	"desktop/src/AudioPluginInterfaceImpl.cpp"
 	)
 
 set (androidaudioplugin_INCLUDES
 	${androidaudioplugin_INCLUDES}
-	${GEN_PROTO_INCLUDE_DIR}
-	${GEN_PROTO_GRPC_INCLUDE_DIR}
+	${GenProtoIncludes}
+	${GenProtoGrpcIncludes}
 	${PROTOBUF_INCLUDE_DIRS}
 	${GRPCPP_INCLUDE_DIRS}
 	)
