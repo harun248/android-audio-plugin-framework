@@ -4,17 +4,14 @@
 
 cmake_minimum_required(VERSION 3.5.1)
 
-if (ANDROID)
-
-else (ANDROID)
+if (NOT ANDROID)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(PROTOBUF REQUIRED protobuf)
 pkg_check_modules(GRPC REQUIRED grpc_unsecure)
-pkg_check_modules(GRPC_PP REQUIRED grpc++)
+pkg_check_modules(GRPCPP REQUIRED grpc++_unsecure)
 
-endif (ANDROID)
-
+endif (NOT ANDROID)
 
 add_subdirectory ("androidaudioplugin")
 

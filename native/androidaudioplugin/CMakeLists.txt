@@ -43,12 +43,12 @@ set (androidaudioplugin_SOURCES
 set (androidaudioplugin_INCLUDES
 	${androidaudioplugin_INCLUDES}
 	${PROTOBUF_INCLUDE_DIRS}
-	${GRPC_PP_INCLUDE_DIRS}
+	${GRPCPP_INCLUDE_DIRS}
 	)
 
 set (androidaudioplugin_LIBRARY_DIRS ${PROTOBUF_LIBRARY_DIRS} ${GRPC_PP_LIBRARY_DIRS})
 
-set (androidaudioplugin_LIBS ${androidaudioplugin_LIBS} ${PROTOBUF_LIBRARIES} ${GRPC_PP_LIBRARIES} dl rt)
+set (androidaudioplugin_LIBS ${androidaudioplugin_LIBS} ${PROTOBUF_LIBRARIES} ${GRPCPP_LIBRARIES} dl rt)
 
 endif (ANDROID)
 
@@ -78,7 +78,7 @@ target_compile_options (androidaudioplugin
 target_link_directories(androidaudioplugin
 		PRIVATE
 		${PROTOBUF_LIBRARY_DIRS}
-		${GRPC_PP_LIBRARY_DIRS}
+		${GRPCPP_LIBRARY_DIRS}
 		)
 
 target_link_libraries (androidaudioplugin
