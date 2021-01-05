@@ -95,8 +95,10 @@ PROTOBUF_GENERATE_CPP(GenProtoSources GenProtoIncludes "desktop/src/AudioPluginS
 #PROTOBUF_GENERATE_GRPC_CPP(GenProtoGrpcSources GenProtoGrpcIncludes "desktop/src/AudioPluginService.proto")
 list(GET GenProtoIncludes 0 GenProtoInclude0)
 #list(GET GenProtoGrpcIncludes 0 GenProtoGrpcInclude0)
-#get_filename_component(GEN_PROTO_INCLUDE_DIR "${GenProtoInclude0}" DIRECTORY)
+get_filename_component(GEN_PROTO_INCLUDE_DIR "${GenProtoInclude0}" DIRECTORY)
 #get_filename_component(GEN_PROTO_GRPC_INCLUDE_DIR "${GenProtoGrpcInclude0}" DIRECTORY)
+
+message ("GEN_PROTO_INCLUDE_DIR : " ${GEN_PROTO_INCLUDE_DIR})
 
 set (androidaudioplugin_SOURCES
 	${androidaudioplugin_SOURCES}
