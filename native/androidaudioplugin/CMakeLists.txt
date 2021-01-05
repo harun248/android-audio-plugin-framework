@@ -102,9 +102,6 @@ get_filename_component(GEN_PROTO_GRPC_INCLUDE_DIR "${GenProtoGrpcInclude0}" DIRE
 list(GET GenProtoSources 0 GenProtoSource0)
 list(GET GenProtoGrpcSources 0 GenProtoGrpcSource0)
 
-message ("GenProtoSources : " ${GenProtoSources})
-message ("GenProtoGrpcSources : " ${GenProtoGrpcSources})
-
 set (androidaudioplugin_SOURCES
 	${androidaudioplugin_SOURCES}
 	"desktop/src/desktop-audio-plugin-client-bridge.cpp"
