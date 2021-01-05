@@ -36,6 +36,8 @@ jobs:
       run: echo cmake.dir=/usr > java/local.properties
     - name: build
       run: make
+    -name: DEBUG DEBUG DEBUG
+      run: cat native/androidaudioplugin/CMakeFiles/androidaudioplugin.dir/build.make
     - name: upload artifact
       if: success()
       uses: actions/upload-artifact@v2
