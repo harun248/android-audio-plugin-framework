@@ -7,6 +7,3 @@
 [submodule "dependencies/tinyxml2"]
 	path = dependencies/tinyxml2
 	url = https://github.com/leethomason/tinyxml2.git
-[submodule "dependencies/grpc"]
-	path = dependencies/grpc
-	url = https://github.com/grpc/grpc.git
