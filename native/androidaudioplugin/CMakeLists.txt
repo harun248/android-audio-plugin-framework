@@ -97,6 +97,10 @@ list(GET GenProtoIncludes 0 GenProtoInclude0)
 list(GET GenProtoGrpcIncludes 0 GenProtoGrpcInclude0)
 get_filename_component(GEN_PROTO_INCLUDE_DIR "${GenProtoInclude0}" DIRECTORY)
 get_filename_component(GEN_PROTO_GRPC_INCLUDE_DIR "${GenProtoGrpcInclude0}" DIRECTORY)
+# This should not really extract only one element, but on GitHub Actions environment the list somehow causes:
+# > native/androidaudioplugin/CMakeFiles/androidaudioplugin.dir/build.make:80: *** target pattern contains no '%'.  Stop.
+list(GET GenProtoSources 0 GenProtoSource0)
+list(GET GenProtoGrpcSources 0 GenProtoGrpcSource0)
 
 message ("GenProtoSources : " ${GenProtoSources})
 message ("GenProtoGrpcSources : " ${GenProtoGrpcSources})
@@ -104,8 +108,8 @@ message ("GenProtoGrpcSources : " ${GenProtoGrpcSources})
 set (androidaudioplugin_SOURCES
 	${androidaudioplugin_SOURCES}
 	"desktop/src/desktop-audio-plugin-client-bridge.cpp"
-	"${GenProtoSources}"
-	"${GenProtoGrpcSources}"
+	"${GenProtoSource0}"
+	"${GenProtoGrpcSource0}"
 	"desktop/src/audio-plugin-host-desktop.cpp"
 	"desktop/src/AudioPluginInterfaceImpl.cpp"
 	)
