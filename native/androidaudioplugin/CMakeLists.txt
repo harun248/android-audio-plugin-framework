@@ -92,7 +92,7 @@ endfunction()
 #end of copypasting
 
 PROTOBUF_GENERATE_CPP(GenProtoSources GenProtoIncludes "desktop/src/AudioPluginService.proto")
-PROTOBUF_GENERATE_GRPC_CPP(GenProtoGrpcSources GenProtoGrpcIncludes "desktop/src/AudioPluginService.proto")
+#PROTOBUF_GENERATE_GRPC_CPP(GenProtoGrpcSources GenProtoGrpcIncludes "desktop/src/AudioPluginService.proto")
 list(GET GenProtoIncludes 0 GenProtoInclude0)
 list(GET GenProtoGrpcIncludes 0 GenProtoGrpcInclude0)
 get_filename_component(GEN_PROTO_INCLUDE_DIR "${GenProtoInclude0}" DIRECTORY)
@@ -115,17 +115,9 @@ set (androidaudioplugin_INCLUDES
 	${GRPCPP_INCLUDE_DIRS}
 	)
 
-set (androidaudioplugin_LIBRARY_DIRS
-	${PROTOBUF_LIBRARY_DIRS}
-	${GRPC_LIBRARY_DIRS}
-	${GRPCPP_LIBRARY_DIRS})
+set (androidaudioplugin_LIBRARY_DIRS ${PROTOBUF_LIBRARY_DIRS} ${GRPC_LIBRARY_DIRS} ${GRPCPP_LIBRARY_DIRS})
 
-set (androidaudioplugin_LIBS
-	${androidaudioplugin_LIBS}
-	${PROTOBUF_LIBRARIES}
-	${GRPC_LIBRARIES}
-	${GRPCPP_LIBRARIES}
-	dl rt)
+set (androidaudioplugin_LIBS ${androidaudioplugin_LIBS} ${PROTOBUF_LIBRARIES} ${GRPC_LIBRARIES} ${GRPCPP_LIBRARIES} dl rt)
 
 endif (ANDROID)
 
