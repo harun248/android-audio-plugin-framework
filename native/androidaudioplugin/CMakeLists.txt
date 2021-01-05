@@ -102,8 +102,6 @@ get_filename_component(GEN_PROTO_GRPC_INCLUDE_DIR "${GenProtoGrpcInclude0}" DIRE
 list(GET GenProtoSources 0 GenProtoSource0)
 list(GET GenProtoGrpcSources 0 GenProtoGrpcSource0)
 
-message ("GenProtoSource0: " ${GenProtoSource0})
-message ("GenProtoGrpcSource0: " ${GenProtoGrpcSource0})
 message ("PROTOBUF_INCLUDE_DIRS: " ${PROTOBUF_INCLUDE_DIRS})
 message ("GEN_PROTO_GRPC_INCLUDE_DIR: " ${GEN_PROTO_GRPC_INCLUDE_DIR})
 
@@ -118,8 +116,8 @@ set (androidaudioplugin_SOURCES
 
 set (androidaudioplugin_INCLUDES
 	${androidaudioplugin_INCLUDES}
-	${GenProtoIncludes}
-	${GenProtoGrpcIncludes}
+	${GEN_PROTO_INCLUDE_DIR}
+	${GEN_PROTO_GRPC_INCLUDE_DIR}
 	${PROTOBUF_INCLUDE_DIRS}
 	${GRPCPP_INCLUDE_DIRS}
 	)
