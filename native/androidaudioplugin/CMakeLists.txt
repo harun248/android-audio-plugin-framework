@@ -95,13 +95,13 @@ PROTOBUF_GENERATE_CPP(GenProtoSources GenProtoIncludes "desktop/src/AudioPluginS
 #PROTOBUF_GENERATE_GRPC_CPP(GenProtoGrpcSources GenProtoGrpcIncludes "desktop/src/AudioPluginService.proto")
 list(GET GenProtoIncludes 0 GenProtoInclude0)
 #list(GET GenProtoGrpcIncludes 0 GenProtoGrpcInclude0)
-get_filename_component(GEN_PROTO_INCLUDE_DIR "${GenProtoInclude0}" DIRECTORY)
+#get_filename_component(GEN_PROTO_INCLUDE_DIR "${GenProtoInclude0}" DIRECTORY)
 #get_filename_component(GEN_PROTO_GRPC_INCLUDE_DIR "${GenProtoGrpcInclude0}" DIRECTORY)
 
 set (androidaudioplugin_SOURCES
 	${androidaudioplugin_SOURCES}
 	"desktop/src/desktop-audio-plugin-client-bridge.cpp"
-	${GenProtoSources}
+#	${GenProtoSources}
 #	${GenProtoGrpcSources}
 	"desktop/src/audio-plugin-host-desktop.cpp"
 	"desktop/src/AudioPluginInterfaceImpl.cpp"
@@ -109,7 +109,7 @@ set (androidaudioplugin_SOURCES
 
 set (androidaudioplugin_INCLUDES
 	${androidaudioplugin_INCLUDES}
-	"${GEN_PROTO_INCLUDE_DIR}"
+#	"${GEN_PROTO_INCLUDE_DIR}"
 #	"${GEN_PROTO_GRPC_INCLUDE_DIR}"
 	${PROTOBUF_INCLUDE_DIRS}
 	${GRPCPP_INCLUDE_DIRS}
