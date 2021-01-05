@@ -105,8 +105,8 @@ list(GET GenProtoGrpcSources 0 GenProtoGrpcSource0)
 set (androidaudioplugin_SOURCES
 	${androidaudioplugin_SOURCES}
 	"desktop/src/desktop-audio-plugin-client-bridge.cpp"
-	"${GenProtoSource0}"
-	"${GenProtoGrpcSource0}"
+	${GenProtoSource0}
+	${GenProtoGrpcSource0}
 	"desktop/src/audio-plugin-host-desktop.cpp"
 	"desktop/src/AudioPluginInterfaceImpl.cpp"
 	)
