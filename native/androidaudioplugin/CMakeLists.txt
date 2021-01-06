@@ -120,7 +120,7 @@ set (androidaudioplugin_LIBRARY_DIRS ${PROTOBUF_LIBRARY_DIRS} ${GRPC_LIBRARY_DIR
 set (androidaudioplugin_LIBS ${androidaudioplugin_LIBS} ${PROTOBUF_LIBRARIES} ${GRPC_LIBRARIES} ${GRPCPP_LIBRARIES} dl)
 
 find_library(LIBRT "rt")
-if (LIBRT-NOTFOUND)
+if (NOT ${LIBRT} EQUAL LIBRT-NOTFOUND)
 set (androidaudioplugin_LIBS ${androidaudioplugin_LIBS} rt)
 endif ()
 
