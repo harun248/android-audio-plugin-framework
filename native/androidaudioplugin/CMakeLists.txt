@@ -117,7 +117,12 @@ set (androidaudioplugin_INCLUDES
 
 set (androidaudioplugin_LIBRARY_DIRS ${PROTOBUF_LIBRARY_DIRS} ${GRPC_LIBRARY_DIRS} ${GRPCPP_LIBRARY_DIRS})
 
-set (androidaudioplugin_LIBS ${androidaudioplugin_LIBS} ${PROTOBUF_LIBRARIES} ${GRPC_LIBRARIES} ${GRPCPP_LIBRARIES} dl rt)
+set (androidaudioplugin_LIBS ${androidaudioplugin_LIBS} ${PROTOBUF_LIBRARIES} ${GRPC_LIBRARIES} ${GRPCPP_LIBRARIES} dl)
+
+find_library(LIBRT "rt")
+if (LIBRT-NOTFOUND)
+set (androidaudioplugin_LIBS ${androidaudioplugin_LIBS} rt)
+endif ()
 
 endif (ANDROID)
 
